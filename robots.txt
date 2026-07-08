@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xenoy96.github.io/Project-Update-3/sitemap.xml
