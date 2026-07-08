@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Update Tracker</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2314161C%22/><text x=%2250%22 y=%2268%22 font-size=%2260%22 font-family=%22Arial,sans-serif%22 font-weight=%22800%22 fill=%22%23FFC915%22 text-anchor=%22middle%22>U</text></svg>">
+<meta property="og:title" content="Update Tracker — Realme Version Checker">
+<meta property="og:description" content="Find the latest available UI version for any Realme device. Community-sourced, hand-verified.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xenoy96.github.io/Project-Update-3/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Update Tracker — Realme Version Checker">
+<meta name="twitter:description" content="Find the latest available UI version for any Realme device. Community-sourced, hand-verified.">
+<meta name="description" content="Find the latest available UI version for any Realme device. Community-sourced and hand-verified by XenoY96.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14161C;
+    --surface: #1D2029;
+    --surface-2: #262A36;
+    --line: #333748;
+    --text: #F2F1EC;
+    --muted: #9497A8;
+    --yellow: #FFC915;
+    --green: #3DDC84;
+    --amber: #FF9F1C;
+    --red: #FF5D5D;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg: #F8F7F4;
+      --surface: #FFFFFF;
+      --surface-2: #F0EEE9;
+      --line: #DDD9D0;
+      --text: #1C1E24;
+      --muted: #6B6D78;
+      --yellow: #B8860A;
+      --green: #1E8E4E;
+      --amber: #C56A0A;
+      --red: #D14343;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;
+    -webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-touch-callout:none;
+  }
+  input, textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 60px;}
+
+  header{padding:40px 20px 26px;border-bottom:1px solid var(--line);position:relative;}
+  header::before{content:"";position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle, rgba(254,219,0,0.12) 0%, transparent 70%);}
+  .visitor-count{
+    position:absolute;top:16px;right:16px;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);
+    background:var(--surface);border:1px solid var(--line);border-radius:20px;
+    padding:5px 11px;display:flex;align-items:center;gap:5px;z-index:2;
+  }
+  .visitor-count .dot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;}
+  .synced-badge{
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--green);
+    background:rgba(61,220,132,0.1);border:1px solid rgba(61,220,132,0.35);border-radius:20px;
+    padding:5px 11px;display:inline-flex;align-items:center;gap:4px;
+  }
+  @media (prefers-color-scheme: light){
+    .synced-badge{background:rgba(30,142,78,0.1);border-color:rgba(30,142,78,0.35);}
+  }
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--yellow);}
+  h1{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(28px,7vw,38px);line-height:1.08;margin:12px 0 10px;letter-spacing:-0.01em;}
+  h1 span{color:var(--yellow);}
+  .intro{color:var(--muted);font-size:15px;line-height:1.6;max-width:540px;margin:0 0 24px;}
+
+  .search-box{position:relative;}
+  .search-box input{width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:16px 16px 16px 46px;font-size:16px;color:var(--text);font-family:'Inter',sans-serif;}
+  .search-box input:focus{outline:none;border-color:var(--yellow);}
+  .search-box .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;z-index:1;}
+  .search-box input::placeholder{color:var(--muted);}
+  .suggestions{
+    display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;
+    background:var(--surface);border:1.5px solid var(--line);border-radius:12px;
+    overflow-y:auto;max-height:240px;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    -webkit-overflow-scrolling:touch;
+  }
+  .suggestions.show{display:block;}
+  .suggestion-item{padding:12px 16px;font-size:14px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--line);}
+  .suggestion-item:first-child{border-top-left-radius:11px;border-top-right-radius:11px;}
+  .suggestion-item:last-child{border-bottom:none;border-bottom-left-radius:11px;border-bottom-right-radius:11px;}
+  .suggestion-item:active{background:var(--surface-2);}
+
+  .stats{display:flex;margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .stat{flex:1;padding:12px 10px;border-right:1px solid var(--line);text-align:center;}
+  .stat:last-child{border-right:none;}
+  .stat .n{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;color:var(--yellow);}
+  .stat .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+
+  section{padding:26px 0 6px;}
+  .section-title{font-family:'Sora',sans-serif;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  .disclaimer{background:rgba(255,159,28,0.06);border:1px solid rgba(255,159,28,0.35);border-radius:12px;padding:16px 18px;}
+  .disclaimer p{margin:0;font-size:12.5px;line-height:1.65;color:var(--muted);}
+  .disclaimer b{color:var(--amber);}
+
+  .announce-banner{
+    border-radius:12px;padding:14px 16px;margin-bottom:14px;
+    font-size:13px;line-height:1.5;display:flex;align-items:flex-start;gap:10px;
+    overflow-wrap:anywhere;word-break:break-word;min-width:0;
+  }
+  .announce-banner .tag{
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:6px;
+    flex-shrink:0;margin-top:1px;
+  }
+  .announce-banner.info{background:rgba(254,219,0,0.08);border:1px solid rgba(254,219,0,0.3);color:var(--text);}
+  .announce-banner.info .tag{background:rgba(254,219,0,0.2);color:var(--yellow);}
+  .announce-banner.beta{background:rgba(93,169,255,0.08);border:1px solid rgba(93,169,255,0.3);color:var(--text);}
+  .announce-banner.beta .tag{background:rgba(93,169,255,0.2);color:#5DA9FF;}
+  .announce-banner.maintenance{background:rgba(255,93,93,0.08);border:1px solid rgba(255,93,93,0.3);color:var(--text);}
+  .announce-banner.maintenance .tag{background:rgba(255,93,93,0.2);color:var(--red);}
+  .announce-banner a{
+    color:var(--yellow);text-decoration:underline;font-weight:600;
+    -webkit-user-select:auto;-moz-user-select:auto;user-select:auto;
+    -webkit-touch-callout:default;
+  }
+
+  .search-loading{display:none;}
+  .search-loading.show{display:block;}
+  .search-loading p{margin:0 0 12px;color:var(--muted);font-size:12.5px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px;}
+  .search-loading .spin{width:14px;height:14px;flex-shrink:0;border:2px solid var(--line);border-top-color:var(--yellow);border-radius:50%;animation:spin 0.7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .skeleton-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px;}
+  .skel-line{height:12px;border-radius:6px;margin-bottom:10px;background:linear-gradient(90deg, var(--surface-2) 25%, #333748 50%, var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.2s ease-in-out infinite;}
+  .skel-line.w60{width:60%;}
+  .skel-line.w40{width:40%;height:18px;}
+  .skel-line.w80{width:80%;}
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  .fade-in{animation:fadeIn 0.35s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  .device{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px;}
+  .device-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .device-name{font-family:'Sora',sans-serif;font-weight:700;font-size:16px;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:4px 9px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
+  .badge.verified{background:rgba(61,220,132,0.14);color:var(--green);}
+  .badge.unverified{background:rgba(255,93,93,0.14);color:var(--red);}
+  .share-btn{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;width:28px;height:28px;font-size:13px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .share-btn:active{background:var(--line);}
+  .device-versions{display:flex;flex-direction:column;gap:14px;margin-top:14px;}
+  .vpair{font-family:'JetBrains Mono',monospace;font-size:13px;}
+  .vpair .k{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;}
+  .vpair .v{color:var(--text);font-weight:500;}
+  .device-extra{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--muted);line-height:1.6;}
+  .device-extra a{-webkit-user-select:auto;-moz-user-select:auto;user-select:auto;-webkit-touch-callout:default;text-decoration:underline;}
+  .device-extra b{color:var(--text);}
+  .empty{text-align:center;padding:30px 20px;color:var(--muted);font-size:14px;line-height:1.6;}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;font-weight:600;}
+  .field input, .field textarea{width:100%;background:var(--surface-2);border:1.5px solid var(--line);border-radius:9px;padding:11px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:14.5px;}
+  .field textarea{resize:vertical;min-height:70px;line-height:1.5;}
+  .field input:focus, .field textarea:focus{outline:none;border-color:var(--yellow);}
+  .btn{background:var(--yellow);color:#14161C;border:none;border-radius:9px;padding:13px 20px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%;}
+  .btn:active{opacity:.8;}
+  .btn:disabled{opacity:.5;}
+  .msg{font-size:13px;padding:10px 12px;border-radius:8px;margin-top:10px;display:none;}
+  .msg.show{display:block;}
+  .msg.ok{background:rgba(61,220,132,0.12);color:var(--green);}
+  .msg.err{background:rgba(255,93,93,0.12);color:var(--red);}
+
+  .thankyou-overlay{
+    display:none;
+    position:absolute;inset:0;
+    background:var(--surface);
+    border-radius:14px;
+    flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:30px 20px;
+    z-index:30;
+  }
+  .thankyou-overlay.show{display:flex;animation:overlayFade 0.3s ease;}
+  @keyframes overlayFade{from{opacity:0;}to{opacity:1;}}
+  .thankyou-check{
+    width:56px;height:56px;border-radius:50%;
+    background:rgba(61,220,132,0.15);
+    color:var(--green);
+    font-size:28px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;
+    animation:checkPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+  }
+  @keyframes checkPop{0%{transform:scale(0);opacity:0;}70%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+  .thankyou-title{
+    font-family:'Sora',sans-serif;font-weight:800;font-size:19px;color:var(--text);
+    margin:0 0 8px;
+    animation:fadeIn 0.4s ease 0.3s both;
+  }
+  .thankyou-sub{
+    font-size:13px;color:var(--muted);line-height:1.6;margin:0;max-width:280px;
+    animation:fadeIn 0.4s ease 0.45s both;
+  }
+
+  footer{text-align:center;padding:30px 20px 10px;color:var(--muted);font-size:12px;font-family:'Inter',sans-serif;line-height:1.7;}
+  footer b{color:var(--text);}
+  footer .role{color:var(--yellow);font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;}
+  footer .date{color:var(--line);font-size:10.5px;margin-top:4px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap" style="padding:0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <h1>Update <span>Tracker</span></h1>
+        <p class="intro" style="margin-bottom:0;">Find the latest available UI version for any Realme device. Sourced from the community and checked by hand before it's marked verified.</p>
+      </div>
+      <div style="margin-left:auto;flex-shrink:0;">
+        <div class="visitor-count" style="position:static;"><span class="dot"></span><span id="visitorCount">— visits</span></div>
+      </div>
+    </div>
+    <div id="announceContainer" style="margin-top:24px;"></div>
+    <div class="search-box" style="position:sticky;top:8px;z-index:25;background:var(--bg);padding-top:4px;padding-bottom:4px;">
+      <span class="icon" id="searchIcon" style="cursor:pointer;">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search device — e.g. Realme P4, GT 7..." autocomplete="off">
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Total devices</div></div>
+      <div class="stat"><div class="n" id="statVerified">0</div><div class="l">Verified</div></div>
+      <div class="stat"><div class="n" id="statUnverified">0</div><div class="l">Unverified</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <div class="section-title">📱 Devices</div>
+    <div class="empty" id="initialPrompt">Type a device name above to check its latest available version.</div>
+    <div class="search-loading" id="searchLoading">
+      <p><span class="spin"></span><span id="searchingText">Searching…</span></p>
+      <div class="skeleton-card">
+        <div class="skel-line w40"></div>
+        <div class="skel-line w60"></div>
+        <div class="skel-line w80"></div>
+      </div>
+    </div>
+    <div id="deviceList"></div>
+    <div id="emptyState" class="empty" style="display:none;"></div>
+  </section>
+
+  <section>
+    <div class="section-title" id="reportSection">📝 Report your version</div>
+    <div class="disclaimer" style="margin-bottom:14px;">
+      <p>This tracker only stays accurate because real users share what's actually on their phone. If your device isn't listed yet, or you've received a newer version than what's shown here, submit it below — it takes under a minute and helps every other Realme user checking the same thing.</p>
+    </div>
+    <div class="panel">
+      <input type="text" id="f_honeypot" name="website" style="position:absolute;left:-9999px;" tabindex="-1" autocomplete="off">
+      <div class="field"><label>Device name</label><input type="text" id="f_device" placeholder="e.g. Realme P4 5G"></div>
+      <div class="field"><label>Old software version</label><input type="text" id="f_old" placeholder="e.g. RMX5110_16.0.5.730(EX01)"></div>
+      <div class="field"><label>Latest/current software version</label><input type="text" id="f_latest" placeholder="e.g. RMX5110_16.0.5.1000(EX01)"></div>
+      <div class="field"><label>Update notes (optional)</label><textarea id="f_notes" placeholder="What changed in this update — camera, battery, bugs fixed, anything worth noting" rows="3"></textarea></div>
+      <div class="field"><label>UI page screenshot link (optional)</label><input type="text" id="f_screenshot" placeholder="Paste a link to your screenshot"></div>
+      <button class="btn" id="submitBtn" onclick="handleSubmit()">Submit</button>
+      <div class="msg" id="submitMsg"></div>
+      <div class="thankyou-overlay" id="thankyouOverlay">
+        <div class="thankyou-check">✓</div>
+        <p class="thankyou-title">Thank you!</p>
+        <p class="thankyou-sub">Your submission helps the whole community. It'll show up here once verified.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">📊 Verification progress</div>
+    <div class="panel" style="display:flex;align-items:center;gap:20px;">
+      <div style="position:relative;width:96px;height:96px;flex-shrink:0;">
+        <svg width="96" height="96" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="var(--surface-2)" stroke-width="9"/>
+          <circle id="ringVerified" cx="50" cy="50" r="42" fill="none" stroke="var(--green)" stroke-width="9"
+            stroke-linecap="round" transform="rotate(-90 50 50)"
+            stroke-dasharray="263.9" stroke-dashoffset="263.9"
+            style="transition:stroke-dashoffset 1.2s cubic-bezier(0.65,0,0.35,1);"/>
+        </svg>
+        <div id="ringPercentText" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:17px;color:var(--text);">0%</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:8px;">Share of devices fully verified</div>
+        <div style="display:flex;gap:16px;font-size:12px;flex-wrap:wrap;">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:5px;"></span>Verified: <b id="ringVerifiedCount" style="color:var(--text);">0</b></span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:5px;"></span>Unverified: <b id="ringUnverifiedCount" style="color:var(--text);">0</b></span>
+        </div>
+        <p style="margin:10px 0 0;font-size:11px;color:var(--muted);">Every submission grows this list. Thanks for being part of it.</p>
+        <p id="ringSyncedLine" style="margin:8px 0 0;font-size:11px;color:var(--muted);display:none;">🕒 Last synced: <span id="ringSyncedTime" style="color:var(--green);"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="disclaimer">
+      <p>Update Tracker is a community-maintained project by XenoY96, cross-checked with Realme's support desk wherever possible.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Update Tracker<br>
+  <b>by XenoY96</b><br>
+  <span class="role">L7 Tech Expert · Realme Community India</span>
+  <div class="date">05-07-2026</div>
+  <div style="margin-top:10px;color:var(--line);font-size:10px;">© Data curated by XenoY96 — do not republish without permission</div>
+</footer>
+
+<script>
+// ⚠️ PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW
+const API_URL = "https://script.google.com/macros/s/AKfycbwN08A96DU2_KhzVV1aSO5ZPggSzyDr4NuRyafK0l-tMf9PRcd-5pmg2Tz3Jk-zFYE7dQ/exec";
+
+function renderAnnouncements(announcements){
+  try{
+    const container = document.getElementById('announceContainer');
+    if(!container || !announcements || announcements.length === 0) return;
+    container.innerHTML = announcements.map(a => {
+      const raw = (a.type || 'info').toLowerCase().trim();
+      const colorClass = raw.includes('beta') ? 'beta' : (raw.includes('maintenance') || raw.includes('notice') || raw.includes('delay')) ? 'maintenance' : 'info';
+      const label = a.type ? a.type.charAt(0).toUpperCase() + a.type.slice(1) : 'Update';
+      const linkHtml = a.link ? ` <a href="${a.link}" target="_blank" rel="noopener">Learn more →</a>` : '';
+      return `<div class="announce-banner ${colorClass}"><span class="tag">${label}</span><span style="min-width:0;flex:1;">${a.message}${linkHtml}</span></div>`;
+    }).join('');
+  }catch(e){
+    console.error("Announcements render error (site unaffected):", e);
+  }
+}
+
+let deviceData = [];
+let searchTimer = null;
+const pageLoadTime = Date.now();
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+async function loadData(){
+  const initial = document.getElementById('initialPrompt');
+  try{
+    const res = await fetch(API_URL + "?t=" + Date.now());
+    const data = await res.json();
+    deviceData = data.devices || [];
+    renderAnnouncements(data.announcements || []);
+    try{
+      document.getElementById('visitorCount').textContent = (data.visits || 0).toLocaleString() + ' visits';
+    }catch(e2){}
+    try{
+      if(data.lastUpdate){
+        const d = new Date(data.lastUpdate);
+        const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const ringLine = document.getElementById('ringSyncedLine');
+        const ringTime = document.getElementById('ringSyncedTime');
+        if(ringLine && ringTime){
+          ringTime.textContent = timeStr;
+          ringLine.style.display = 'block';
+        }
+      }
+    }catch(e3){}
+    initial.innerHTML = "Type a device name above to check its latest available version.";
+  }catch(e){
+    console.error("Failed to load data:", e);
+    deviceData = [];
+    initial.innerHTML = `Couldn't load data right now. <span style="color:var(--yellow);text-decoration:underline;cursor:pointer;" onclick="loadData()">Tap to retry</span>`;
+  }
+  updateStats();
+  checkUrlParam();
+}
+
+function updateStats(){
+  const verifiedCount = deviceData.filter(d => d.status === "verified").length;
+  const unverifiedCount = deviceData.filter(d => d.status === "unverified").length;
+  document.getElementById('statTotal').textContent = deviceData.length;
+  document.getElementById('statVerified').textContent = verifiedCount;
+  document.getElementById('statUnverified').textContent = unverifiedCount;
+
+  const total = deviceData.length;
+  const pct = total > 0 ? Math.round((verifiedCount / total) * 100) : 0;
+  const circumference = 263.9;
+  const offset = circumference - (pct / 100) * circumference;
+
+  try{
+    document.getElementById('ringPercentText').textContent = pct + '%';
+    document.getElementById('ringVerifiedCount').textContent = verifiedCount;
+    document.getElementById('ringUnverifiedCount').textContent = unverifiedCount;
+    setTimeout(() => {
+      document.getElementById('ringVerified').style.strokeDashoffset = offset;
+    }, 200);
+  }catch(e){}
+}
+
+function showSuggestions(value){
+  const box = document.getElementById('suggestions');
+  const f = value.trim().toLowerCase();
+  if(f === ""){ box.classList.remove('show'); box.innerHTML = ''; return; }
+  const seen = new Set();
+  const matches = deviceData.filter(d => {
+    const name = d.device.toLowerCase();
+    if(!name.includes(f) || seen.has(name)) return false;
+    seen.add(name);
+    return true;
+  });
+  if(matches.length === 0){ box.classList.remove('show'); box.innerHTML = ''; return; }
+  box.innerHTML = matches.map(d => `<div class="suggestion-item" onclick="selectSuggestion('${d.device.replace(/'/g,"\\'")}')">${d.device}</div>`).join('');
+  box.classList.add('show');
+}
+
+function selectSuggestion(name){
+  document.getElementById('searchInput').value = name;
+  document.getElementById('suggestions').classList.remove('show');
+  runSearch(name);
+}
+
+function renderResults(filter=""){
+  const list = document.getElementById('deviceList');
+  const empty = document.getElementById('emptyState');
+  const f = filter.trim().toLowerCase();
+  const filtered = deviceData.filter(d => d.device.toLowerCase().includes(f));
+
+  if(filtered.length === 0){
+    list.innerHTML = "";
+    empty.style.display = 'block';
+    empty.innerHTML = `This device isn't listed yet. Submit your version below — the tracker is updated by hand, so please check back after some time. <span style="color:var(--yellow);text-decoration:underline;cursor:pointer;" onclick="document.getElementById('reportSection').scrollIntoView({behavior:'smooth'})">Jump to form ↓</span>`;
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.innerHTML = filtered.map(d => `
+    <div class="device fade-in">
+      <div class="device-top">
+        <div class="device-name">${escapeHtml(d.device)}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge ${d.status}">${d.status === 'verified' ? 'Verified' : 'Unverified'}</span>
+          <button class="share-btn" onclick="event.preventDefault();event.stopPropagation();shareDevice('${d.device.replace(/'/g, "\\'")}');return false;" title="Share">🔗</button>
+        </div>
+      </div>
+      <div class="device-versions">
+        <div class="vpair"><span class="k">Old Version</span><span class="v">${escapeHtml(d.old)}</span></div>
+        <div class="vpair"><span class="k">Latest Version</span><span class="v">${escapeHtml(d.latest)}</span></div>
+      </div>
+      ${d.status === 'verified' ? `<div style="margin-top:8px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">✓ Verified by XenoY96 — UI Team</div>` : ''}
+      ${(d.notes || d.screenshot) ? `
+        <div class="device-extra">
+          ${d.notes ? `<div><b>Update notes:</b> ${linkify(d.notes)}</div>` : ''}
+          ${d.screenshot ? `<div style="margin-top:4px;"><a href="${d.screenshot}" target="_blank" style="color:var(--yellow);">View UI screenshot →</a></div>` : ''}
+        </div>
+      ` : ''}
+      <div style="margin-top:10px;">
+        <span onclick="event.preventDefault();event.stopPropagation();reportIssue('${d.device.replace(/'/g, "\\'")}');" style="font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;">⚠️ Report incorrect info</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function runSearch(value){
+  const loading = document.getElementById('searchLoading');
+  const list = document.getElementById('deviceList');
+  const empty = document.getElementById('emptyState');
+  const initial = document.getElementById('initialPrompt');
+
+  clearTimeout(searchTimer);
+
+  if(value.trim() === ""){
+    loading.classList.remove('show');
+    list.style.display = 'none';
+    list.innerHTML = '';
+    empty.style.display = 'none';
+    initial.style.display = 'block';
+    return;
+  }
+
+  initial.style.display = 'none';
+  list.style.display = 'none';
+  empty.style.display = 'none';
+  document.getElementById('searchingText').textContent = `Searching for "${value}"…`;
+  loading.classList.add('show');
+
+  searchTimer = setTimeout(() => {
+    loading.classList.remove('show');
+    list.style.display = 'block';
+    renderResults(value);
+  }, 1000);
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  showSuggestions(e.target.value);
+  runSearch(e.target.value);
+});
+document.getElementById('searchInput').addEventListener('blur', () => {
+  setTimeout(() => document.getElementById('suggestions').classList.remove('show'), 150);
+});
+document.getElementById('searchIcon').addEventListener('click', () => {
+  document.getElementById('searchInput').focus();
+  const val = document.getElementById('searchInput').value;
+  if(val.trim() !== "") runSearch(val);
+});
+
+function slugify(name){
+  return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function updatePageMeta(device){
+  if(device){
+    document.title = device.device + ' — Latest UI Version | Update Tracker';
+    const desc = document.querySelector('meta[name="description"]');
+    if(desc) desc.setAttribute('content', device.device + ' latest available UI version: ' + device.latest + '. Community-verified on Update Tracker.');
+  }else{
+    document.title = 'Update Tracker';
+    const desc = document.querySelector('meta[name="description"]');
+    if(desc) desc.setAttribute('content', 'Find the latest available UI version for any Realme device. Community-sourced and hand-verified by XenoY96.');
+  }
+}
+
+function checkUrlParam(){
+  const hash = window.location.hash;
+  if(hash.indexOf('#device/') === 0){
+    const slug = hash.replace('#device/', '');
+    const match = deviceData.find(d => slugify(d.device) === slug);
+    if(match){
+      document.getElementById('searchInput').value = match.device;
+      runSearch(match.device);
+      updatePageMeta(match);
+      return;
+    }
+  }
+  const params = new URLSearchParams(window.location.search);
+  const device = params.get('device');
+  if(device){
+    document.getElementById('searchInput').value = device;
+    runSearch(device);
+    const match = deviceData.find(d => d.device.toLowerCase() === device.toLowerCase());
+    if(match) updatePageMeta(match);
+  }
+}
+
+function reportIssue(deviceName){
+  const issue = window.prompt('What\'s wrong with the "' + deviceName + '" entry? (e.g. outdated version, wrong build number)');
+  if(!issue || !issue.trim()) return;
+
+  fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({ action: "report", device: deviceName, issue: issue.trim() })
+  }).then(() => {
+    alert('Thanks — this has been flagged for review.');
+  }).catch(() => {
+    alert('Something went wrong sending this report. Please try again.');
+  });
+}
+
+function shareDevice(deviceName){
+  const match = deviceData.find(d => d.device === deviceName);
+  const base = window.location.href.split('#')[0].split('?')[0];
+  const url = base + '#device/' + slugify(deviceName);
+  if(match){
+    history.pushState(null, '', url);
+    updatePageMeta(match);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Link copied — share it directly with anyone checking this device.');
+    }).catch(() => { window.prompt('Copy this link:', url); });
+  }else{
+    window.prompt('Copy this link:', url);
+  }
+}
+
+async function handleSubmit(){
+  const honeypot = document.getElementById('f_honeypot').value;
+  if(honeypot !== ""){ return; }
+
+  const timeSinceLoad = Date.now() - pageLoadTime;
+  if(timeSinceLoad < 3000){
+    alert('Please take a moment to review your entry before submitting.');
+    return;
+  }
+
+  const device = document.getElementById('f_device').value.trim();
+  const old = document.getElementById('f_old').value.trim();
+  const latest = document.getElementById('f_latest').value.trim();
+  const notes = document.getElementById('f_notes').value.trim();
+  const screenshot = document.getElementById('f_screenshot').value.trim();
+  const msg = document.getElementById('submitMsg');
+
+  if(!device || !old || !latest){
+    msg.textContent = "Please fill in device name, old version, and latest version.";
+    msg.className = "msg show err";
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = "Submitting…";
+
+  try{
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify({ action: "submit", device, old, latest, notes, screenshot })
+    });
+    msg.className = "msg";
+    document.getElementById('f_device').value = '';
+    document.getElementById('f_old').value = '';
+    document.getElementById('f_latest').value = '';
+    document.getElementById('f_notes').value = '';
+    document.getElementById('f_screenshot').value = '';
+    const overlay = document.getElementById('thankyouOverlay');
+    overlay.classList.add('show');
+    setTimeout(() => { overlay.classList.remove('show'); }, 3200);
+    setTimeout(() => loadData(), 1500);
+  }catch(e){
+    msg.textContent = "Something went wrong. Please try again.";
+    msg.className = "msg show err";
+  }
+  btn.disabled = false;
+  btn.textContent = "Submit";
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || "";
+  return div.innerHTML;
+}
+
+function linkify(str){
+  const escaped = escapeHtml(str);
+  return escaped.replace(/(https?:\/\/[^\s<]+)/g, url => `<a href="${url}" target="_blank" rel="noopener" style="color:var(--yellow);">${url}</a>`);
+}
+
+loadData();
+</script>
+
+</body>
+</html>
