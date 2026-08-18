@@ -1,0 +1,246 @@
+/* realme True Fan Check — standalone styling.
+   Reuses the host site's existing CSS variables (--bg, --surface, --yellow,
+   etc.) when present, with safe fallbacks if this module is ever dropped
+   into a page that doesn't define them. */
+
+#tfc-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg, #0c0d11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+#tfc-overlay.tfc-fade-out { opacity: 0; pointer-events: none; }
+#tfc-overlay.tfc-hidden { display: none; }
+
+.tfc-card {
+  background: var(--surface, #14161c);
+  border: 1px solid var(--line, #262a33);
+  border-radius: 18px;
+  padding: 28px 24px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.tfc-mascot-wrap {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 14px;
+}
+.tfc-mascot-glow {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--yellow, #FFC915) 0%, transparent 70%);
+  opacity: 0.35;
+  filter: blur(6px);
+}
+.tfc-mascot-float { animation: tfc-float 2.6s ease-in-out infinite; }
+@keyframes tfc-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(-2deg); }
+}
+
+.tfc-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--yellow, #FFC915);
+  background: rgba(255, 201, 21, 0.1);
+  border: 1px solid rgba(255, 201, 21, 0.3);
+  border-radius: 20px;
+  padding: 4px 11px;
+  margin-bottom: 10px;
+}
+
+.tfc-heading {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 21px;
+  color: var(--text, #f2f2f4);
+  margin: 0 0 6px;
+}
+
+.tfc-intro {
+  font-size: 13px;
+  color: var(--muted, #8b8f9c);
+  line-height: 1.55;
+  margin: 0 0 18px;
+}
+
+.tfc-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted, #8b8f9c);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.tfc-status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--yellow, #FFC915);
+}
+
+.tfc-puzzle-card {
+  background: var(--surface-2, #1b1e26);
+  border: 1px solid var(--line, #262a33);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.tfc-puzzle-card.tfc-shake { animation: tfc-shake 0.4s ease; }
+@keyframes tfc-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(3px); }
+}
+
+.tfc-question {
+  font-size: 15px;
+  color: var(--text, #f2f2f4);
+  font-weight: 600;
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+.tfc-word-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  color: var(--yellow, #FFC915);
+  font-weight: 700;
+}
+
+.tfc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tfc-option-btn {
+  background: var(--surface, #14161c);
+  border: 1.5px solid var(--line, #262a33);
+  border-radius: 9px;
+  padding: 11px;
+  color: var(--text, #f2f2f4);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.tfc-option-btn:active { background: var(--surface-2, #1b1e26); }
+.tfc-option-btn.tfc-selected-wrong {
+  border-color: #e5484d;
+  background: rgba(229, 72, 77, 0.1);
+}
+.tfc-option-btn.tfc-selected-right {
+  border-color: #3ecf8e;
+  background: rgba(62, 207, 142, 0.1);
+}
+
+.tfc-text-row {
+  display: flex;
+  gap: 8px;
+}
+.tfc-text-input {
+  flex: 1;
+  background: var(--surface, #14161c);
+  border: 1.5px solid var(--line, #262a33);
+  border-radius: 9px;
+  padding: 11px 13px;
+  color: var(--text, #f2f2f4);
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+}
+.tfc-text-input:focus { outline: none; border-color: var(--yellow, #FFC915); }
+
+.tfc-verify-btn {
+  background: var(--yellow, #FFC915);
+  color: #14161c;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tfc-verify-btn:disabled { opacity: 0.5; }
+
+.tfc-footer-note {
+  font-size: 10.5px;
+  color: var(--muted, #8b8f9c);
+  margin-top: 4px;
+}
+
+/* Success state */
+.tfc-success { display: none; }
+.tfc-success.tfc-show { display: block; }
+.tfc-success-icon {
+  font-size: 15px;
+  color: #3ecf8e;
+  margin-bottom: 4px;
+}
+.tfc-success-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 19px;
+  color: var(--text, #f2f2f4);
+  margin: 6px 0 4px;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: tfc-rise-in 0.4s ease 0.5s forwards;
+}
+.tfc-success-sub {
+  font-size: 13px;
+  color: var(--muted, #8b8f9c);
+  margin: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: tfc-rise-in 0.4s ease 0.65s forwards;
+}
+@keyframes tfc-rise-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tfc-mascot-pop { animation: tfc-pop 0.5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tfc-pop {
+  0% { transform: scale(0.75) rotate(-6deg); }
+  60% { transform: scale(1.08) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.tfc-confetti-piece {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 6px;
+  height: 10px;
+  opacity: 0;
+  animation: tfc-confetti 1.1s ease-out forwards;
+}
+@keyframes tfc-confetti {
+  0% { opacity: 1; transform: translate(0,0) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--tfc-cx), var(--tfc-cy)) rotate(var(--tfc-cr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #tfc-overlay, .tfc-mascot-float, .tfc-puzzle-card.tfc-shake,
+  .tfc-success-title, .tfc-success-sub, .tfc-mascot-pop, .tfc-confetti-piece {
+    animation: none !important;
+    transition: none !important;
+  }
+  .tfc-success-title, .tfc-success-sub { opacity: 1; transform: none; }
+}
