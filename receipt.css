@@ -1,0 +1,68 @@
+/* ── Receipt-printer submission animation ─────────────────────────────
+   Optional add-on. Delete this file (and its <link> tag in index.html)
+   to fall back to the plain "Thank you!" confirmation. ───────────────── */
+
+/* The base .thankyou-overlay class centers its content (right for the
+   plain fallback) — this receipt version needs full-width, top-down
+   stacking instead, and can be tall enough to need scrolling on short
+   screens. Overriding by ID keeps the plain fallback untouched. */
+#thankyouOverlay{align-items:stretch;justify-content:flex-start;text-align:left;padding:20px 16px 22px;overflow-y:auto;}
+
+.rt-slot{display:flex;align-items:center;gap:10px;padding-bottom:12px;flex-shrink:0;}
+.rt-led{width:8px;height:8px;border-radius:50%;background:var(--yellow);flex:none;}
+.rt-slot.printing .rt-led{animation:rtPulse 1s ease-in-out infinite;}
+@keyframes rtPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,201,21,.55);}50%{box-shadow:0 0 0 6px rgba(255,201,21,0);}}
+.rt-slot-label{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
+.rt-slot-mouth{height:5px;margin-bottom:6px;background:var(--bg);border-radius:0 0 3px 3px;box-shadow:inset 0 2px 4px rgba(0,0,0,.35);flex-shrink:0;}
+
+.rt-paper-wrap{overflow:hidden;clip-path:inset(0 0 100% 0);position:relative;flex-shrink:0;}
+.rt-printhead{position:absolute;left:0;right:0;top:0;height:3px;background:var(--yellow);box-shadow:0 0 10px 2px rgba(255,201,21,.85);opacity:0;z-index:3;}
+.rt-paper{background:#F7F5EF;color:#1C1C1C;border-radius:6px;padding:20px 18px 24px;margin-top:2px;position:relative;font-family:'JetBrains Mono',monospace;}
+.rt-ink{opacity:.08;transition:opacity .18s linear;}
+.rt-ink.lit{opacity:1;}
+.rt-brand{text-align:center;font-weight:700;font-size:14px;letter-spacing:.04em;}
+.rt-brand span{color:#9A9A9A;font-weight:500;font-size:9.5px;display:block;margin-top:2px;letter-spacing:.1em;}
+.rt-div{border:none;border-top:1px dashed #C6C4BC;margin:12px 0;}
+.rt-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:3px 0;}
+.rt-row .k{color:#6E6E6E;}
+.rt-row .v{font-weight:700;text-align:right;}
+.rt-row .v.ok{color:#166534;}
+
+.rt-stamp{display:flex;justify-content:center;margin:-28px 0 -24px;position:relative;z-index:4;pointer-events:none;}
+.rt-stamp-ring{
+  width:88px;height:88px;border-radius:50%;
+  border:3px solid rgba(178,58,46,.82);
+  display:flex;align-items:center;justify-content:center;
+  transform:rotate(-11deg) scale(.5);opacity:0;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .25s ease;
+}
+.rt-stamp-ring.stamped{opacity:.85;transform:rotate(-11deg) scale(1);}
+.rt-stamp-ring-in{
+  width:72px;height:72px;border-radius:50%;
+  border:1.5px solid rgba(178,58,46,.7);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:rgba(178,58,46,.92);
+}
+.rt-stamp-word{font-weight:800;font-size:12.5px;letter-spacing:.04em;}
+
+.rt-thanks2{text-align:center;font-size:11px;font-weight:700;letter-spacing:.06em;margin:14px 0 4px;line-height:1.5;}
+.rt-sub2{text-align:center;font-size:10px;color:#6E6E6E;margin-bottom:4px;}
+.rt-barcode{height:26px;margin:12px 0 6px;display:flex;align-items:stretch;justify-content:center;}
+.rt-barcode span{display:block;height:100%;background:#1C1C1C;margin-right:2px;}
+.rt-barcode span:last-child{margin-right:0;}
+.rt-tear{display:flex;overflow:hidden;height:9px;margin:14px -18px -24px;width:calc(100% + 36px);border-radius:0 0 6px 6px;}
+.rt-tear span{flex:none;border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid #DEDBD0;}
+.rt-receipt-img{width:100%;border-radius:6px;display:block;}
+
+.rt-actions{margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;transform:translateY(6px);transition:opacity .4s ease, transform .4s ease;flex-shrink:0;}
+.rt-actions.show{opacity:1;transform:translateY(0);}
+.rt-btn2{width:100%;background:var(--yellow);color:#14161C;border:none;font-family:'Sora',sans-serif;font-weight:700;font-size:13.5px;padding:13px 16px;border-radius:9px;cursor:pointer;}
+.rt-btn2:active{opacity:.8;}
+.rt-hint{color:var(--muted);font-size:10.5px;text-align:center;}
+.rt-again{background:none;border:none;color:var(--muted);font-size:11.5px;text-decoration:underline;cursor:pointer;margin-top:2px;}
+
+@media (prefers-reduced-motion: reduce){
+  .rt-actions{transition:none !important;}
+  .rt-ink{transition:none !important;}
+  .rt-stamp-ring{transition:none !important;}
+}
